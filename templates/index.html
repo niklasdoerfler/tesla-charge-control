@@ -1,0 +1,144 @@
+<html>
+<head>
+    <title>Tesla Charge Controller</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+        :root {
+          --text: #000;
+          --bg: #fff;
+        }
+
+        body {
+          font-family: "Source Sans Pro", sans-serif;
+          background-color: var(--bg);
+          color: var(--text);
+        }
+
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --text: #fff;
+            --bg: #000;
+          }
+        }
+
+        .slidecontainer {
+            width: 100%; /* Width of the outside container */
+            margin-top: 20px;
+        }
+
+        /* The slider itself */
+        .slider {
+            -webkit-appearance: none; /* Override default CSS styles */
+            appearance: none;
+            width: 100%; /* Full-width */
+            height: 40px; /* Specified height */
+            background: #d3d3d3; /* Grey background */
+            outline: none; /* Remove outline */
+            opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+            -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+            transition: opacity .2s;
+        }
+
+        /* Mouse-over effects */
+        .slider:hover {
+            opacity: 1; /* Fully shown on mouse-over */
+        }
+
+        /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; /* Override default look */
+            appearance: none;
+            width: 35px; /* Set a specific slider handle width */
+            height: 35px; /* Slider handle height */
+            background: #04AA6D; /* Green background */
+            cursor: pointer; /* Cursor on hover */
+        }
+
+        .slider::-moz-range-thumb {
+            width: 35px; /* Set a specific slider handle width */
+            height: 35px; /* Slider handle height */
+            background: #04AA6D; /* Green background */
+            cursor: pointer; /* Cursor on hover */
+        }
+
+        /* The slider itself */
+        .button {
+            -webkit-appearance: none; /* Override default CSS styles */
+            appearance: none;
+            height: 50px; /* Specified height */
+            background: #d3d3d3; /* Grey background */
+            outline: none; /* Remove outline */
+            opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+            -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+            transition: opacity .2s;
+        }
+
+        /* Mouse-over effects */
+        .button:hover {
+            opacity: 1; /* Fully shown on mouse-over */
+        }
+
+    </style>
+</head>
+<body>
+<h1>Tesla Charge Controller</h1>
+<p></p>
+<div>
+    <table>
+        <tr>
+            <td>Current Charger State:</td>
+            <td>{{ current_charger_state['charging_state'] }}</td>
+        </tr>
+        <tr>
+            <td>Battery Level:</td>
+            <td>{{ current_charger_state['battery_level'] }} %</td>
+        </tr>
+        <tr>
+            <td>Energy added:</td>
+            <td>{{ current_charger_state['charge_energy_added'] }} kWh</td>
+        </tr>
+        <tr>
+            <td>Charger amps:</td>
+            <td>{{ current_charger_state['charge_amps'] }} A</td>
+        </tr>
+        <tr>
+            <td>Charger voltage:</td>
+            <td>{{ current_charger_state['charger_voltage'] }} V</td>
+        </tr>
+        <tr>
+            <td>Minutes to full charge:</td>
+            <td>{{ current_charger_state['minutes_to_full_charge'] }} min</td>
+        </tr>
+        <tr>
+            <td>Inside temperature:</td>
+            <td>{{ climate_state['inside_temp'] }} °C</td>
+        </tr>
+        <tr>
+            <td>Outside temperature:</td>
+            <td>{{ climate_state['outside_temp'] }} °C</td>
+        </tr>
+        <tr>
+            <td>Last update:</td>
+            <td>{{ climate_state['timestamp']|format_timestamp }}</td>
+        </tr>
+
+    </table>
+</div>
+<div class="slidecontainer">
+    <form action="/set_charging_amps" method="POST">
+        Set Charger Amps: <span id="chargerAmpsDisplay"></span> A
+        <input type="range" min="1" max="16" value="{{ current_charger_state['charge_amps'] }}" class="slider" id="chargerAmpsSlider" name="chargerAmpsValue">
+        <button class="button">UPDATE</button>
+    </form>
+</div>
+<script>
+    let sel = document.getElementById('chargerAmpsSlider');
+    let show = document.getElementById('chargerAmpsDisplay');
+    show.innerHTML = "{{ current_charger_state['charge_amps'] }}"
+
+    sel.addEventListener("change", function () {
+        show.innerHTML = this.value;
+    });
+</script>
+</body>
+</html>
